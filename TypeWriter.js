@@ -11,11 +11,13 @@ class TypeWriter extends HTMLElement {
 	#running
 	get running() { return this.#running }
 
-	static callbacks = ["Start", "Typed", "Erased", "Connected"].map(name => {
+	static callbacks = ["Start", "Typed", "Erased", "Connected", "Resumed"].map(name => {
 		Object.defineProperty(TypeWriter.prototype, `on${name}`, {get() { return Function(this.getAttribute(`on${name}`)) }})
 		Object.defineProperty(TypeWriter.prototype, name.toLowerCase(), {get() { return  new Promise(resolve => this.addEventListener(name.toLowerCase(), (event) => resolve(event.detail), {once: true})) }})
 		return name
 	})
+
+	resume() { this.emit("resumed") }
 
 	constructor() {
 		super()
@@ -75,7 +77,7 @@ class TypeWriter extends HTMLElement {
 		}
 	}
 
-	async run() {
+	async run(wait=self=>sleep(self.wait)) {
 		if (this.running) return
 		this.#running = true
 		while (true) {
@@ -87,13 +89,14 @@ class TypeWriter extends HTMLElement {
 
 			await this.typeElement(this.shadowRoot, subject.cloneNode(true))
 			this.emit("typed", subject)
-			await sleep(this.wait)
+			await wait(this)
 
 			await this.emptyElement(this.shadowRoot)
 			this.emit("erased", subject)
-			await sleep(this.wait)
 
 			if (!this.loop) return this.#running=false
+
+			await wait(this)
 		}
 	}
 }
