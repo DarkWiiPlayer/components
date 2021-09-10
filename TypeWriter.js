@@ -11,7 +11,7 @@ class TypeWriter extends HTMLElement {
 	#running
 	get running() { return this.#running }
 
-	static callbacks = ["Start", "Typed", "Erased", "Connected", "Resumed"].map(name => {
+	static callbacks = ["Typing", "Typed", "Erasing", "Erased", "Connected", "Resumed"].map(name => {
 		Object.defineProperty(TypeWriter.prototype, `on${name}`, {get() { return Function(this.getAttribute(`on${name}`)) }})
 		Object.defineProperty(TypeWriter.prototype, name.toLowerCase(), {get() { return  new Promise(resolve => this.addEventListener(name.toLowerCase(), (event) => resolve(event.detail), {once: true})) }})
 		return name
@@ -87,10 +87,12 @@ class TypeWriter extends HTMLElement {
 			subject.remove()
 			this.append(subject)
 
+			this.emit("typing", subject)
 			await this.typeElement(this.shadowRoot, subject.cloneNode(true))
 			this.emit("typed", subject)
 			await wait(this)
 
+			this.emit("erasing", subject)
 			await this.emptyElement(this.shadowRoot)
 			this.emit("erased", subject)
 
