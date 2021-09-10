@@ -1,5 +1,8 @@
 const sleep = time => new Promise(done => setTimeout(done, time*1e3))
 
+const special = new Set(['style'])
+const visible = element => !special.has(element.tagName.toLowerCase())
+
 class TypeWriter extends HTMLElement {
 	get wait() { return Number(this.getAttribute("wait") || 1) }
 	get type() { return Number(this.getAttribute("type") || .1) }
@@ -50,9 +53,14 @@ class TypeWriter extends HTMLElement {
 			if ("data" in child) {
 				await this.typeText(target, child.textContent.replace(/\s+/g, ' '))
 			} else {
-				let copy = child.cloneNode(false)
-				target.append(copy)
-				await this.typeElement(copy, child)
+				if (visible(child)) {
+					let copy = child.cloneNode(false)
+					target.append(copy)
+					await this.typeElement(copy, child)
+				} else {
+					let copy = child.cloneNode(true)
+					target.append(copy)
+				}
 			}
 		}
 	}
@@ -71,7 +79,8 @@ class TypeWriter extends HTMLElement {
 			if ("data" in child) {
 				await this.emptyText(child)
 			} else {
-				await this.emptyElement(child)
+				if (visible(child))
+					await this.emptyElement(child)
 			}
 			child.remove()
 		}
