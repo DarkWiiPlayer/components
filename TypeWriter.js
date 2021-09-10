@@ -85,10 +85,16 @@ class TypeWriter extends HTMLElement {
 
 			let subject = this.children[0]
 			subject.remove()
+			let content = (subject.content ?? subject).cloneNode(true)
+			if (subject.nodeName.toLowerCase() == "template") {
+				let old = subject
+				subject = document.createElement("template")
+				subject.content.append(old.content)
+			}
 			this.append(subject)
 
 			this.emit("typing", subject)
-			await this.typeElement(this.shadowRoot, subject.cloneNode(true))
+			await this.typeElement(this.shadowRoot, content)
 			this.emit("typed", subject)
 			await wait(this)
 
