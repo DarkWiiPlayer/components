@@ -1,37 +1,64 @@
 const sleep = time => new Promise(done => setTimeout(done, time*1e3))
 
 class TypeWriter extends HTMLElement {
-	get words() {
-		return this.innerHTML
-			.split(/[\n]+/g)
-			.map(word => word.replace(/^[ \t]*/g, ''))
-	}
 	get wait() { return Number(this.getAttribute("wait") || 1) }
 	get type() { return Number(this.getAttribute("type") || .1) }
 	get back() { return Number(this.getAttribute("back") || .06) }
-	
-	set words(words) { this.innerHTML = words.join("\n") }
+
 	connectedCallback() {
 		this.loop(this.attachShadow({mode: 'open'}))
 	}
-	async loop(shadow) {
-		let content = document.createElement('span')
-		content.setAttribute("part", "text")
-		shadow.append(content)
+
+	async typeText(target, text) {
+		let node = document.createTextNode('')
+		target.append(node)
+		for (let char of text.split('')) {
+			node.appendData(char)
+			await sleep(this.type)
+		}
+	}
+
+	async typeElement(target, elem) {
+		for (let child of elem.childNodes) {
+			if ("data" in child) {
+				await this.typeText(target, child.textContent.replace(/\s+/g, ' '))
+			} else {
+				let copy = child.cloneNode(false)
+				target.append(copy)
+				await this.typeElement(copy, child)
+			}
+		}
+	}
+
+	async emptyText(target) {
+		while (target.data.length) {
+			target.data = target.data.slice(0, -1)
+			await sleep(this.back)
+		}
+	}
+
+	async emptyElement(target) {
+		let children = target.childNodes
+		while (children.length) {
+			let child = children[children.length-1]
+			if ("data" in child) {
+				await this.emptyText(child)
+			} else {
+				await this.emptyElement(child)
+			}
+			child.remove()
+		}
+	}
+
+	async loop(root) {
 		while (true) {
-			while(this.words[0].match(new RegExp(`${content.innerText}.+$`))) {
-				console.log()
-				content.innerText = content.innerText + this.words[0][content.innerText.length]
-				await sleep(this.type)
-			}
+			let subject = this.children[0]
+			subject.remove()
+			this.append(subject)
+			await this.typeElement(root, subject.cloneNode(true))
 			await sleep(this.wait)
-			while(content.innerText.length) {
-				content.textContent = content.innerText.slice(0, -1)
-				await sleep(this.back)
-			}
-			await sleep(.5)
-			let words = this.words
-			this.words = [...words.slice(1), words[0]]
+			await this.emptyElement(root)
+			await sleep(this.wait)
 		}
 	}
 }
