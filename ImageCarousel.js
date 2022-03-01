@@ -102,7 +102,8 @@ class ImageCarousel extends HTMLElement {
 
 	startTimer() {
 		this.cancelTimer()
-		this.#timer = setInterval(() => this.advance(), this.interval)
+		if (this.interval)
+			this.#timer = setInterval(() => this.advance(), this.interval)
 	}
 
 	get interval() { return Number(this.getAttribute("interval")) }
