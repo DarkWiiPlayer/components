@@ -26,8 +26,9 @@ const lastSmaller = (value, array, from=-1, to=array.length) => {
 }
 
 const css = `
+	:host { display: block; }
 	#container {
-		position: absolute;
+		position: relative;
 		width: 100%;
 	}
 	#outer {
