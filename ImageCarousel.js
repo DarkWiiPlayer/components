@@ -129,7 +129,7 @@ class ImageCarousel extends HTMLElement {
 	advance() {
 		if (this.position < this.width - this.boxWidth) {
 			const offsets = this.offsets
-			this.position = offsets[firstLarger(this.position, offsets) % offsets.length]
+			this.position = offsets[firstLarger(this.position+5, offsets) % offsets.length]
 		} else {
 			this.position = 0
 		}
@@ -138,7 +138,7 @@ class ImageCarousel extends HTMLElement {
 	rewind() {
 		if (0 < this.position) {
 			const offsets = this.offsets
-			this.position = offsets[lastSmaller(this.position, offsets) % offsets.length]
+			this.position = offsets[lastSmaller(this.position-5, offsets) % offsets.length]
 		} else {
 			this.position = this.width
 		}
