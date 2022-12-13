@@ -49,7 +49,8 @@ class TypeWriter extends HTMLElement {
 		}
 	}
 
-	async typeElement(target, elem) { for (let child of elem.childNodes) {
+	async typeElement(target, elem) {
+		for (let child of elem.childNodes) {
 			if ("data" in child) {
 				await this.typeText(target, child.textContent.replace(/\s+/g, ' '))
 			} else {
@@ -102,14 +103,14 @@ class TypeWriter extends HTMLElement {
 			}
 			this.append(subject)
 
-			this.emit("typing", subject)
+			this.emit("typing", content)
 			await this.typeElement(this.shadowRoot, content)
-			this.emit("typed", subject)
+			this.emit("typed", content)
 			await wait(this)
 
-			this.emit("erasing", subject)
+			this.emit("erasing", content)
 			await this.emptyElement(this.shadowRoot)
-			this.emit("erased", subject)
+			this.emit("erased", content)
 
 			if (!this.loop) return this.#running=false
 
