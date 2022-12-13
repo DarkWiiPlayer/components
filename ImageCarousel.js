@@ -1,9 +1,3 @@
-const slot = name => {
-	const element = document.createElement("slot")
-	element.name = name
-	return element
-}
-
 const firstLarger = (value, array, from=-1, to=array.length) => {
 	if (from+1 === to)
 		return to
@@ -79,7 +73,7 @@ class ImageCarousel extends HTMLElement {
 			<style>${css}</style>
 			<div id="container">
 				<div id="outer">
-					<slot id="inner" name="image"></slot>
+					<slot id="inner"></slot>
 				</div>
 				${arrow("right").outerHTML}
 				${arrow("left").outerHTML}
