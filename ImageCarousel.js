@@ -12,7 +12,6 @@ const lastSmaller = (value, array, from=-1, to=array.length) => {
 	if (from+1 === to)
 		return from
 	const center = Math.floor((from+to)/2)
-	console.log(from, center, to)
 	if (array[center] < value)
 		return lastSmaller(value, array, center, to)
 	else
@@ -21,16 +20,16 @@ const lastSmaller = (value, array, from=-1, to=array.length) => {
 
 const css = `
 	:host { display: block; }
-	#container {
+	.container {
 		position: relative;
 		width: 100%;
 	}
-	#outer {
+	.outer {
 		scroll-behavior: smooth;
 		overflow: hidden;
 		position: relative;
 	}
-	#inner {
+	.inner {
 		display: block;
 		width: max-content;
 		overflow: hidden;
@@ -43,23 +42,9 @@ const css = `
 		position: absolute;
 		cursor: pointer;
 	}
-	#left { left: 1em; }
-	#right { right: 1em; transform: rotateZ(180deg) }
+	.left { left: 1em; }
+	.right { right: 1em; transform: rotateZ(180deg) }
 `
-
-const arrow = (id) => {
-	let button = document.createElementNS('http://www.w3.org/2000/svg', 'svg') 
-	button.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
-	button.setAttribute('viewBox', '0 0 100 100')
-	button.setAttribute('preserveAspectRatio', 'none')
-	button.id = id
-	button.part = "controls"
-	button.classList.add("button")
-	let path = button.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'path'))
-	path.setAttribute('d', 'M 0,50 100,0 100,100 0,50')
-	button.addEventListener('click', () => {scroll(outer, component, 1); reset()})
-	return button
-}
 
 class ImageCarousel extends HTMLElement {
 	#timer
@@ -71,20 +56,24 @@ class ImageCarousel extends HTMLElement {
 	connectedCallback() {
 		this.attachShadow({mode: "open"}).innerHTML = `
 			<style>${css}</style>
-			<div id="container">
-				<div id="outer">
-					<slot id="inner"></slot>
+			<div class="container">
+				<div class="outer">
+					<slot class="inner"></slot>
 				</div>
-				${arrow("right").outerHTML}
-				${arrow("left").outerHTML}
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none" class="button right">
+					<path d="M 0,50 100,0 100,100 0,50"></path>
+				</svg>
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none" class="button left">
+					<path d="M 0,50 100,0 100,100 0,50"></path>
+				</svg>
 			</div>
 		`
 		this.shadowRoot
-			.getElementById('right')
-			.addEventListener("click", event => { this.advance(); this.startTimer() })
+			.querySelector(".right")
+			.addEventListener("click", () => { this.advance(); this.startTimer() })
 		this.shadowRoot
-			.getElementById('left')
-			.addEventListener("click", event => { this.rewind(); this.startTimer() })
+			.querySelector(".left")
+			.addEventListener("click", () => { this.rewind(); this.startTimer() })
 		Array.from(this.childNodes)
 			.filter(element => element.nodeName == "#text")
 			.forEach(element => element.remove())
@@ -103,8 +92,8 @@ class ImageCarousel extends HTMLElement {
 
 	get interval() { return Number(this.getAttribute("interval")) }
 
-	get inner() { return this.shadowRoot.getElementById("inner") }
-	get outer() { return this.shadowRoot.getElementById("outer") }
+	get inner() { return this.shadowRoot.querySelector(".inner") }
+	get outer() { return this.shadowRoot.querySelector(".outer") }
 	get images() { return this.inner.assignedNodes() }
 	get offsets() {
 		const start = this.inner.getBoundingClientRect().x
