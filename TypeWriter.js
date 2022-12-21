@@ -45,7 +45,8 @@ class TypeWriter extends HTMLElement {
 		target.append(node)
 		for (let char of text.split('')) {
 			node.appendData(char)
-			await sleep(this.type)
+			if (char != ' ')
+				await sleep(this.type)
 		}
 	}
 
