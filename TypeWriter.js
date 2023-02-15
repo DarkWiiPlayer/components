@@ -43,7 +43,7 @@ class TypeWriter extends HTMLElement {
 	async typeText(target, text) {
 		let node = document.createTextNode('')
 		target.append(node)
-		for (let char of text.split('')) {
+		for (let char of text) {
 			node.appendData(char)
 			if (char != ' ')
 				await sleep(this.type)
@@ -69,7 +69,7 @@ class TypeWriter extends HTMLElement {
 
 	async emptyText(target) {
 		while (target.data.length) {
-			target.data = target.data.slice(0, -1)
+			target.data = [...target.data].slice(0, -1).join('')
 			await sleep(this.back)
 		}
 	}
