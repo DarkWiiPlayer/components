@@ -1,14 +1,13 @@
+# DarkWiiPlayer/components
+[![](https://data.jsdelivr.com/v1/package/gh/darkwiiplayer/components/badge)](https://www.jsdelivr.com/package/gh/darkwiiplayer/components)
+
 A collection of self-contained custom elements that do somewhat complex things
 inside a website.
 
 ## TypeWriter
 
 ```html
-<type-writer
-    wait=1
-    type=0.1
-    back=0.06
->
+<type-writer wait=1 type=0.1 back=0.06>
     <span>Some text to type</span>
 </type-writer>
 ```
@@ -59,8 +58,10 @@ loaded, the user will just see the first item as static text.
 A simple image carousel that scrolls through a list of images, then scrolls back
 to the start.
 
+```html
 <image-carousel interval="3000">
-  <img src="https://picsum.photos/1920/1080?random&1">
-  <img src="https://picsum.photos/1020/1080?random&2">
-  <img src="https://picsum.photos/1220/680?random&3">
+    <img src="https://picsum.photos/1920/1080?random&1">
+    <img src="https://picsum.photos/1020/1080?random&2">
+    <img src="https://picsum.photos/1220/680?random&3">
 </image-carousel>
+```
