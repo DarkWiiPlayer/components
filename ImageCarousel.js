@@ -34,6 +34,9 @@ const css = `
 		width: max-content;
 		overflow: hidden;
 	}
+	[part="controls"] {
+		display: contents;
+	}
 	.button {
 		fill: white;
 		height: 2em;
@@ -60,12 +63,14 @@ class ImageCarousel extends HTMLElement {
 				<div class="outer">
 					<slot class="inner"></slot>
 				</div>
-				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none" class="button right">
-					<path d="M 0,50 100,0 100,100 0,50"></path>
-				</svg>
-				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none" class="button left">
-					<path d="M 0,50 100,0 100,100 0,50"></path>
-				</svg>
+				<div part="controls">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none" class="button right">
+						<path d="M 0,50 100,0 100,100 0,50"></path>
+					</svg>
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none" class="button left">
+						<path d="M 0,50 100,0 100,100 0,50"></path>
+					</svg>
+				</div>
 			</div>
 		`
 		this.shadowRoot
