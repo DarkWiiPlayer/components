@@ -2,8 +2,9 @@ export default class extends HTMLElement {
 	connectedCallback() {
 		if (this.stored) {
 			this.set(this.stored)
+		} else {
+			this.setCurrent()
 		}
-		this.setCurrent()
 	}
 
 	setCurrent() {
@@ -23,6 +24,7 @@ export default class extends HTMLElement {
 		this.set(scheme)
 	}
 
+	/** @param {string} scheme */
 	set(scheme) {
 		const root = document.documentElement
 		root.setAttribute("color-scheme", scheme)
